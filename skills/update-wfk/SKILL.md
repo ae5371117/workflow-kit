@@ -11,7 +11,7 @@ description: >-
 
 # Update WFK — Kit Distribution Sync
 
-Sync core Workflow Kit skills, templates, and conventions with the `YOUR_USERNAME/workflow-kit` GitHub repo. This is the distribution channel - you push improvements, users pull updates.
+Sync core Workflow Kit skills, templates, and conventions with the `ae5371117/workflow-kit` GitHub repo. This is the distribution channel - you push improvements, users pull updates.
 
 **Arguments:** $ARGUMENTS
 
@@ -47,7 +47,7 @@ The manifest declares:
 
 ## Configuration
 
-- **Repo:** `YOUR_USERNAME/workflow-kit`
+- **Repo:** `ae5371117/workflow-kit`
 - **Branch:** `main`
 - **Clone cache:** `/tmp/flora-skills-repo`
 - **Active skills:** `~/.claude/skills/`
@@ -64,7 +64,7 @@ The manifest declares:
         |
    push v  ^ fetch
         |
-github.com/YOUR_USERNAME/workflow-kit
+github.com/ae5371117/workflow-kit
 ```
 
 ## Default Action Detection
@@ -108,7 +108,7 @@ if [ -d /tmp/flora-skills-repo/.git ]; then
   cd /tmp/flora-skills-repo && git pull --quiet
 else
   rm -rf /tmp/flora-skills-repo
-  git clone https://github.com/YOUR_USERNAME/workflow-kit.git /tmp/flora-skills-repo
+  git clone https://github.com/ae5371117/workflow-kit.git /tmp/flora-skills-repo
 fi
 ```
 
@@ -341,6 +341,18 @@ Write the new manifest with current hashes for all synced skills and the new ver
 
 ### `pull` - Pull latest from the WFK repo
 
+#### Step 0: Sync the fork from upstream
+
+The configured repo (`ae5371117/workflow-kit`) is a **fork** of `hgreene624/workflow-kit`. The fork does not auto-update, so sync it from its parent first - otherwise the pull only ever sees the fork's frozen snapshot and never picks up new upstream releases.
+
+```bash
+gh repo sync ae5371117/workflow-kit -b main
+```
+
+- On success (fast-forward), `gh` reports the fork was updated; continue to Step 1.
+- If `gh` reports the fork **has diverged** from upstream (you pushed your own commits to the fork's `main`), it refuses to fast-forward. Do NOT pass `--force` blindly - that discards your fork commits. Surface it: tell the user the fork diverged and ask whether to force-sync (lose fork-only commits) or skip the sync and pull the fork as-is.
+- If `gh` is unavailable or the sync errors for any other reason, log a warning and continue with the fork's current state (the pull still works, it just won't include the newest upstream changes).
+
 #### Step 1: Clone or pull the latest repo
 
 ```bash
@@ -348,7 +360,7 @@ if [ -d /tmp/flora-skills-repo/.git ]; then
   cd /tmp/flora-skills-repo && git pull --quiet
 else
   rm -rf /tmp/flora-skills-repo
-  git clone https://github.com/YOUR_USERNAME/workflow-kit.git /tmp/flora-skills-repo
+  git clone https://github.com/ae5371117/workflow-kit.git /tmp/flora-skills-repo
 fi
 ```
 
